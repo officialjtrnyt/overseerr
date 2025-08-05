@@ -32,6 +32,9 @@ const messages = defineMessages({
   pastdays: '{type} (past {days} days)',
   movierequests: 'Movie Requests',
   seriesrequest: 'Series Requests',
+  usertype: 'User Type',
+  administrator: 'Administrator',
+  standarduser: 'Standard User',
   recentlywatched: 'Recently Watched',
   plexwatchlist: 'Plex Watchlist',
   emptywatchlist:
@@ -43,7 +46,11 @@ type MediaTitle = MovieDetails | TvDetails;
 const UserProfile = () => {
   const intl = useIntl();
   const router = useRouter();
-  const { user, error } = useUser({
+  const {
+    user,
+    error,
+    hasPermission: userHasPermission,
+  } = useUser({
     id: Number(router.query.userId),
   });
   const { user: currentUser, hasPermission: currentHasPermission } = useUser();
@@ -143,7 +150,7 @@ const UserProfile = () => {
             { type: 'and' }
           )) && (
           <div className="relative z-40">
-            <dl className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
+            <dl className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-4">
               <div className="overflow-hidden rounded-lg bg-gray-800 bg-opacity-50 px-4 py-5 shadow ring-1 ring-gray-700 sm:p-6">
                 <dt className="truncate text-sm font-bold text-gray-300">
                   {intl.formatMessage(messages.totalrequests)}
@@ -268,6 +275,16 @@ const UserProfile = () => {
                       {intl.formatMessage(messages.unlimited)}
                     </span>
                   )}
+                </dd>
+              </div>
+              <div className="overflow-hidden rounded-lg bg-gray-800 bg-opacity-50 px-4 py-5 shadow ring-1 ring-gray-700 sm:p-6">
+                <dt className="truncate text-sm font-bold text-gray-300">
+                  {intl.formatMessage(messages.usertype)}
+                </dt>
+                <dd className="mt-1 text-3xl font-semibold text-white">
+                  {userHasPermission(Permission.ADMIN)
+                    ? intl.formatMessage(messages.administrator)
+                    : intl.formatMessage(messages.standarduser)}
                 </dd>
               </div>
             </dl>
